@@ -27,36 +27,35 @@ export const userRoute = new Elysia().post('/api/users', async ({ body, set }) =
     set.status = 500;
     return { error: 'Internal Server Error' };
   }
-}).get('/api/users/current', async ({ headers, set }) => {
-  const authHeader = headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    set.status = 401;
-    return { error: 'Unauthorized' };
-  }
-
-  const token = authHeader.replace('Bearer ', '');
-
-  try {
-    const result = await getCurrentUser(token);
-    return { data: result };
-  } catch (error: any) {
-    set.status = 401;
-    return { error: 'Unauthorized' };
-  }
-}).delete('/api/users/logout', async ({ headers, set }) => {
-  const authHeader = headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    set.status = 401;
-    return { error: 'Unauthorized' };
-  }
-
-  const token = authHeader.replace('Bearer ', '');
-
-  try {
-    const result = await logoutUser(token);
-    return result;
-  } catch (error: any) {
-    set.status = 401;
-    return { error: 'Unauthorized' };
-  }
-});
+})
+  .derive(({ headers }) => {
+    const authHeader = headers.authorization;
+    const token = authHeader && authHeader.startsWith('Bearer ')
+      ? authHeader.replace('Bearer ', '')
+      : null;
+    return { token };
+  })
+  .onBeforeHandle(({ token, set }) => {
+    if (!token) {
+      set.status = 401;
+      return { error: 'Unauthorized' };
+    }
+  })
+  .get('/api/users/current', async ({ token, set }) => {
+    try {
+      const result = await getCurrentUser(token!);
+      return { data: result };
+    } catch (error: any) {
+      set.status = 401;
+      return { error: 'Unauthorized' };
+    }
+  })
+  .delete('/api/users/logout', async ({ token, set }) => {
+    try {
+      const result = await logoutUser(token!);
+      return result;
+    } catch (error: any) {
+      set.status = 401;
+      return { error: 'Unauthorized' };
+    }
+  });
