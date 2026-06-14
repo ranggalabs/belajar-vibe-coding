@@ -1,4 +1,4 @@
-import { Elysia } from 'elysia';
+import { Elysia, t } from 'elysia';
 import { registerUser, loginUser, getCurrentUser, logoutUser } from '../services/user-service';
 
 export const userRoute = new Elysia().post('/api/users', async ({ body, set }) => {
@@ -14,6 +14,12 @@ export const userRoute = new Elysia().post('/api/users', async ({ body, set }) =
     set.status = 500;
     return { error: 'Internal Server Error' };
   }
+}, {
+  body: t.Object({
+    name: t.String({ maxLength: 255, error: 'Nama maksimal 255 karakter' }),
+    email: t.String({ format: 'email', error: 'Format email tidak valid' }),
+    password: t.String({ minLength: 6, error: 'Password minimal 6 karakter' })
+  })
 }).post('/api/users/login', async ({ body, set }) => {
   try {
     const result = await loginUser(body);
