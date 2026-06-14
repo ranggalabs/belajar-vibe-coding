@@ -1,4 +1,4 @@
-import { Elysia } from 'elysia';
+import { Elysia, t } from 'elysia';
 import { swagger } from '@elysiajs/swagger';
 import { userRoute } from './routes/user-route';
 
@@ -18,12 +18,16 @@ export const app = new Elysia()
   }))
   .use(userRoute)
   .get('/', () => 'Hello World! Elysia server is running.', {
+    response: t.String(),
     detail: {
       tags: ['System'],
       summary: 'Mengembalikan pesan selamat datang server'
     }
   })
   .get('/health', () => ({ status: 'ok' }), {
+    response: t.Object({
+      status: t.String()
+    }),
     detail: {
       tags: ['System'],
       summary: 'Mengecek kesehatan server'

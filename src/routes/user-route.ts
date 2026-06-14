@@ -20,6 +20,12 @@ export const userRoute = new Elysia().post('/api/users', async ({ body, set }) =
     email: t.String({ format: 'email', error: 'Format email tidak valid' }),
     password: t.String({ minLength: 6, error: 'Password minimal 6 karakter' })
   }),
+  response: {
+    200: t.Object({ data: t.String() }),
+    400: t.Object({ error: t.String() }),
+    500: t.Object({ error: t.String() }),
+    422: t.Any()
+  },
   detail: {
     tags: ['User Management'],
     summary: 'Registrasi User Baru',
@@ -43,6 +49,12 @@ export const userRoute = new Elysia().post('/api/users', async ({ body, set }) =
     email: t.String({ format: 'email', error: 'Format email tidak valid' }),
     password: t.String({ error: 'Password wajib diisi' })
   }),
+  response: {
+    200: t.Object({ data: t.String() }),
+    401: t.Object({ error: t.String() }),
+    500: t.Object({ error: t.String() }),
+    422: t.Any()
+  },
   detail: {
     tags: ['User Management'],
     summary: 'Login User',
@@ -65,6 +77,17 @@ export const userRoute = new Elysia().post('/api/users', async ({ body, set }) =
     return { error: 'Unauthorized' };
   }
 }, {
+  response: {
+    200: t.Object({
+      data: t.Object({
+        id: t.Number(),
+        name: t.String(),
+        email: t.String(),
+        created_at: t.Any()
+      })
+    }),
+    401: t.Object({ error: t.String() })
+  },
   detail: {
     tags: ['User Management'],
     summary: 'Ambil Profil User Aktif',
@@ -88,6 +111,10 @@ export const userRoute = new Elysia().post('/api/users', async ({ body, set }) =
     return { error: 'Unauthorized' };
   }
 }, {
+  response: {
+    200: t.Object({ data: t.String() }),
+    401: t.Object({ error: t.String() })
+  },
   detail: {
     tags: ['User Management'],
     summary: 'Logout User',
