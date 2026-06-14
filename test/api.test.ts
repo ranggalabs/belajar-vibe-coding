@@ -54,8 +54,8 @@ describe("API Test Scenarios", () => {
         // Verifikasi di database
         const dbUsers = await db.select().from(users);
         expect(dbUsers.length).toBe(1);
-        expect(dbUsers[0].name).toBe("John Doe");
-        expect(dbUsers[0].email).toBe("john@example.com");
+        expect(dbUsers[0]!.name).toBe("John Doe");
+        expect(dbUsers[0]!.email).toBe("john@example.com");
       });
 
       test("Skenario 2: Gagal registrasi jika email sudah terdaftar", async () => {
@@ -208,7 +208,7 @@ describe("API Test Scenarios", () => {
         });
 
         const dbUsers = await db.select().from(users).where(eq(users.email, "john@example.com"));
-        const userId = dbUsers[0].id;
+        const userId = dbUsers[0]!.id;
 
         const token = "valid-session-token-123";
         await db.insert(sessions).values({
@@ -264,7 +264,7 @@ describe("API Test Scenarios", () => {
         });
 
         const dbUsers = await db.select().from(users).where(eq(users.email, "john@example.com"));
-        const userId = dbUsers[0].id;
+        const userId = dbUsers[0]!.id;
 
         const token = "valid-session-token-logout";
         await db.insert(sessions).values({
